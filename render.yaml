@@ -1,0 +1,55 @@
+# render.yaml (Final, Perfected Version)
+
+services:
+  # This is your main Web Service that runs the FastAPI app and Telegram bot
+  - type: web
+    name: yeab-game-zone-api
+    env: python
+    plan: starter # 'starter' plan prevents sleeping, which is good for bots
+    region: frankfurt
+    
+    # The build command now runs a direct, self-contained Python command to initialize the DB.
+    # This is more robust and doesn't depend on extra files.
+    buildCommand: "pip install -r requirements.txt && python -c \"import asyncio; from database_models.manager import init_db; asyncio.run(init_db())\""
+    
+    # CRITICAL FIX: The start command now correctly points to the `app` object in your new `app.py` file.
+    startCommand: "gunicorn -w 4 -k uvicorn.workers.UvicornWorker app:app"
+    
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: yeab-ludo-db
+          property: connectionString
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: CHAPA_API_KEY
+        sync: false
+      - key: WEBHOOK_URL
+        fromService:
+          type: web
+          name: yeab-game-zone-api
+          property: url
+
+  # This is your background worker for handling game timeouts
+  - type: worker
+    name: yeab-game-forfeit-worker
+    env: python
+    plan: starter
+    region: frankfurt
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "python -m bot.worker"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: yeab-ludo-db
+          property: connectionString
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+
+# This defines the PostgreSQL database service itself
+databases:
+  - name: yeab-ludo-db
+    plan: free # 'free' is okay for the database as long as usage is low
+    databaseName: yeab_game_db
+    user: yeab_user
