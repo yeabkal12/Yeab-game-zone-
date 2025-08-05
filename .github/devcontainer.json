@@ -1,0 +1,54 @@
+{
+  // A descriptive name for your development container.
+  "name": "Yeab Game Zone Ludo Bot",
+  
+  // This is the most important part. It tells Codespaces to use the
+  // docker-compose.yml file located in this same .github/ folder to build the environment.
+  "dockerComposeFile": "docker-compose.yml",
+  
+  // This specifies that 'app' is the main service from your docker-compose.yml file.
+  // When you open Codespaces, your terminal will be inside this container.
+  "service": "app",
+  
+  // This sets the default directory that will be opened in your VS Code terminal.
+  "workspaceFolder": "/workspace",
+  
+  // This section customizes the VS Code editor that runs inside Codespaces.
+  "customizations": {
+    "vscode": {
+      "settings": {
+        // --- Code Quality & Formatting ---
+        "python.pythonPath": "/usr/local/bin/python",
+        "python.linting.pylintEnabled": true,
+        "python.linting.enabled": true,
+        "python.formatting.provider": "autopep8", // Automatically format your code
+        "[python]": {
+          "editor.formatOnSave": true // Format your Python code every time you save
+        }
+      },
+      // --- Recommended Extensions ---
+      // This ensures that every developer working on the project has the same
+      // essential extensions for Python development.
+      "extensions": [
+        "ms-python.python",       // The official Python extension from Microsoft
+        "ms-python.vscode-pylance", // Provides rich language features like IntelliSense
+        "ms-azuretools.vscode-docker" // Useful for managing Docker containers
+      ]
+    }
+  },
+  
+  // This command runs automatically *after* the development container has been created.
+  // It installs all the Python packages from your requirements.txt file.
+  "postCreateCommand": "pip install --no-cache-dir -r requirements.txt",
+  
+  // This sets the default user inside the container for security and permission reasons.
+  "remoteUser": "vscode"
+}```
+
+### What Makes This Version Perfect:
+
+1.  **Automatic Code Formatting:** The new lines `python.formatting.provider` and `editor.formatOnSave` are a major improvement. Now, every time you save a Python file, the editor will automatically clean up your code to follow standard Python style guides. This keeps your code consistent and professional.
+2.  **Clear, Detailed Comments:** The entire file is now commented, explaining what each setting does and why it's important. This makes it much easier to understand and maintain.
+3.  **Essential Extensions:** It includes the most important VS Code extensions for a productive Python development workflow, ensuring that your environment is fully featured right from the start.
+
+This configuration will give you a smooth, professional, and highly productive development environment every time you open your project in GitHub Codespaces.
