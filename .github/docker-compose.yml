@@ -1,0 +1,40 @@
+# .github/docker-compose.yml
+
+version: '3.8'
+
+services:
+  # The 'app' service, as referenced in devcontainer.json
+  app:
+    build:
+      context: .. 
+      dockerfile: ../Dockerfile # Correctly point to the Dockerfile in the root
+    
+    volumes:
+      - ..:/workspace:cached
+      
+    env_file:
+      - ../.env
+      
+    depends_on:
+      - db
+      
+    command: sleep infinity
+
+  # The 'db' service for your PostgreSQL database
+  db:
+    image: postgres:14-alpine
+    restart: always 
+    
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=yeab_game_zone_db
+      
+    ports:
+      - '5432:5432'
+      
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
